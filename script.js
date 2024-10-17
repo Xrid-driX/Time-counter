@@ -12,9 +12,15 @@ function createCounter() {
     let timer = 0;
     let isRunning = false;
 
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`; // Format as "mm:ss"
+    };
+
     const timerDisplay = document.createElement('div');
     timerDisplay.className = 'text-lg font-bold mb-2 timer-display';
-    timerDisplay.innerText = `Timer: 0s`;
+    timerDisplay.innerText = `Timer: ${formatTime(timer)}`; // Initialize with formatted timer
 
     const countDisplay = document.createElement('div');
     countDisplay.className = 'text-lg mb-2 count-display';
@@ -41,7 +47,7 @@ function createCounter() {
 
         if (isRunning) {
             const taskItem = document.createElement('li');
-            taskItem.innerText = `Folded towel count: "${count}" finished in ${timer}s`;
+            taskItem.innerText = `Folded towel count: "${count}" finished in ${formatTime(timer)}`; // Update with formatted timer
             taskItem.className = 'task transition duration-300 hover:text-green-500';
             taskList.appendChild(taskItem);
         }
@@ -59,7 +65,7 @@ function createCounter() {
             timer = 0;
             timerInterval = setInterval(() => {
                 timer++;
-                timerDisplay.innerText = `Timer: ${timer}s`;
+                timerDisplay.innerText = `Timer: ${formatTime(timer)}`; // Update with formatted time
                 updateCounterInLocalStorage(counterId, count, timer);
             }, 1000);
         }
@@ -74,7 +80,7 @@ function createCounter() {
         count = 0;
         timer = 0;
         countDisplay.innerText = `Count: ${count}`;
-        timerDisplay.innerText = `Timer: 0s`;
+        timerDisplay.innerText = `Timer: ${formatTime(timer)}`; // Update with formatted time
         clearInterval(timerInterval);
         isRunning = false;
         taskList.innerHTML = '';
@@ -124,7 +130,7 @@ function createCounter() {
         count = savedData.count;
         timer = savedData.timer;
         countDisplay.innerText = `Count: ${count}`;
-        timerDisplay.innerText = `Timer: ${timer}s`;
+        timerDisplay.innerText = `Timer: ${formatTime(timer)}`; // Update with formatted time
     }
 
     return counterContainer; // Return the created counter element
@@ -157,14 +163,12 @@ function loadCountersFromLocalStorage() {
             const counterContainer = createCounter();
             counterContainer.dataset.id = id; // Set the data-id
             counterContainer.querySelector('.count-display').innerText = `Count: ${count}`;
-            counterContainer.querySelector('.timer-display').innerText = `Timer: ${timer}s`;
+            counterContainer.querySelector('.timer-display').innerText = `Timer: ${formatTime(timer)}`; // Use formatted timer
             // Ensure the timer is set correctly on load
             if (timer > 0) {
-                counterContainer.querySelector('.timer-display').innerText = `Timer: ${timer}s`;
-                // Start the timer if it's running
                 const timerInterval = setInterval(() => {
                     timer++;
-                    counterContainer.querySelector('.timer-display').innerText = `Timer: ${timer}s`;
+                    counterContainer.querySelector('.timer-display').innerText = `Timer: ${formatTime(timer)}`; // Use formatted timer
                     updateCounterInLocalStorage(id, count, timer); // Update timer in local storage
                 }, 1000);
             }
@@ -203,12 +207,13 @@ if (savedTheme) {
     setTheme(savedTheme);
 }
 
-// Toggle Theme Button
-document.getElementById('toggleTheme').onclick = () => {
-    const currentTheme = body.classList.contains('bg-gray-800') ? 'light' : 'dark';
-    setTheme(currentTheme);
-    localStorage.setItem('theme', currentTheme);
+// Toggle dark mode
+document.getElementById('darkModeToggle').onclick = () => {
+    const currentTheme = body.classList.contains('bg-gray-800') ? 'dark' : 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
 };
 
-// Load counters on page load
+// Load counters from local storage on page load
 loadCountersFromLocalStorage();
