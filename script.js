@@ -208,7 +208,7 @@ if (savedTheme) {
 }
 
 // Toggle dark mode
-document.getElementById('darkModeToggle').onclick = () => {
+document.getElementById('toggleTheme').onclick = () => {
     const currentTheme = body.classList.contains('bg-gray-800') ? 'dark' : 'light';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
